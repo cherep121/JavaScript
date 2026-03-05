@@ -174,8 +174,8 @@ console.log("Сумма:", calc.sum());
 console.log("Произведение:", calc.mul());
 
 calc.read(7, 3);
-console.log("Сумма:", calc.sum()); // 10
-console.log("Произведение:", calc.mul()); // 21
+console.log("Сумма:", calc.sum());
+console.log("Произведение:", calc.mul());
 
 // №11
 console.log("\n**** №11 ****");
