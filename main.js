@@ -198,7 +198,7 @@ console.log("После read(5):", accumulator.value);
 
 //Работа с прототипами
 // №1
-console.log("++++ РАБОТА С ПРОТИПАМИ ++++");
+console.log("\n++++ РАБОТА С ПРОТИПАМИ ++++");
 console.log("\n**** №1 ****");
 
 let animal = {
