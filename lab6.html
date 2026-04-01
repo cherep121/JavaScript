@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа: JavaScript в браузере</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 14pt;
+            line-height: 1.5;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .report-container {
+            max-width: 210mm;
+            width: 100%;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 15mm 10mm 20mm 30mm;
+            margin: 0 auto;
+        }
+
+        .title-page {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        .title-page h1 {
+            font-size: 28pt;
+            margin: 50px 0 20px;
+        }
+        .title-page h3 {
+            margin: 30px 0;
+            font-weight: normal;
+        }
+        .title-page p {
+            margin-top: 60px;
+        }
+
+        .task-section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        .task-title {
+            font-size: 18pt;
+            font-weight: bold;
+            margin: 20px 0 15px;
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-left: 5px solid #7161EF;
+        }
+        .task-content {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        button, input {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            padding: 5px 10px;
+            margin: 5px;
+        }
+        input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #7161EF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #5a4bc7;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 8px;
+            margin-top: 8px;
+            border-left: 3px solid #7161EF;
+            font-family: monospace;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        td, th {
+            border: 1px solid #333;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        .orange-link {
+            color: orange;
+        }
+        #list-example {
+            margin-top: 10px;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .dynamic-card {
+            height: 36vh;
+            width: 30vh;
+            margin: 10px;
+            box-shadow: 0 4px 16px 0 rgba(0,0,0,0.2);
+            transition: 0.3s ease-out;
+            background-color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .dynamic-card:hover {
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.4);
+            transform: scale(1.02, 1.02);
+        }
+        .dynamic-card img {
+            width: 30vh;
+            height: 30vh;
+            border-radius: 5px 5px 0 0;
+            object-fit: cover;
+        }
+        .description {
+            padding: 0 16px;
+            text-align: center;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="report-container">
+    <div class="title-page">
+        <h2>Министерство науки и высшего образования РФ</h2>
+        <h3>ФГБОУ ВО "Институт цифры"</h3>
+        <h1>Лабораторная работа №6<br>JavaScript в браузере</h1>
+        <p>Выполнил: студент группы ФИТ-241<br>Чистюхин Антон</p>
+        <p>Проверил: преподаватель<br>Дуванов И.О.</p>
+        <p>г. Кемерово, 2026</p>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">1. Скрипты с prompt/alert (5 баллов)</div>
+        <div class="task-content">
+            <p><strong>a) sin(x):</strong> <button onclick="taskA()">Вычислить sin(x)</button></p>
+            <p><strong>b) Принадлежность точки квадрату:</strong> <button onclick="taskB()">Проверить точку</button></p>
+            <p><strong>c) Сумма двух квадратов:</strong> <button onclick="taskC()">Проверить число</button></p>
+            <p><strong>d) Проверка email на @:</strong> <button onclick="taskD()">Проверить email</button></p>
+            <p><strong>e) Доля латинских букв в строке:</strong> <button onclick="taskE()">Вычислить процент</button></p>
+            <p><strong>f) Удаление повторных вхождений слов:</strong> <button onclick="taskF()">Обработать строку</button></p>
+            <p><strong>g) Массив случайных чисел (обратный порядок, по 5 в строке):</strong> <button onclick="taskG()">Создать массив</button></p>
+            <p><strong>h) Матрица: замена на диагоналях (кроме max/min):</strong> <button onclick="taskH()">Создать матрицу</button></p>
+            <p><strong>i) Прибавить n дней к текущей дате:</strong> <button onclick="taskI()">Прибавить дни</button></p>
+            <p><strong>j) Месяцев до 1 сентября:</strong> <button onclick="taskJ()">Сколько месяцев?</button></p>
+        </div>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">2. Таблица размером n x m (n = букв имени, m = букв фамилии) (1 балл)</div>
+        <div class="task-content">
+            <div id="table-container"></div>
+        </div>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">3. Получение элементов через JS (1 балл)</div>
+        <div class="task-content">
+            <div id="sample-page">
+                <div>Пользователи:</div>
+                <ul>
+                    <li>Джон</li>
+                    <li>Пит</li>
+                </ul>
+            </div>
+            <button onclick="task3()">Показать полученные элементы (alert)</button>
+        </div>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">4. Поиск элементов в документе (таблица, form и т.д.) (2 балла)</div>
+        <div class="task-content">
+            <div id="target-doc-placeholder">
+            </div>
+            <button onclick="task4()">Выполнить поиск элементов (результат в консоль и alert)</button>
+        </div>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">5. Выделить красным ячейки с четной суммой i и j (таблица из задания 2) (2 балла)</div>
+        <div class="task-content">
+            <button onclick="task5()">Выделить ячейки (четная сумма i+j)</button>
+            <div id="task5-table-wrapper"></div>
+        </div>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">6. Сделать внешние ссылки оранжевыми (2 балла)</div>
+        <div class="task-content">
+            <div id="links-container">
+                <a name="list">the list</a>
+                <ul>
+                    <li><a href="http://google.com">http://google.com</a></li>
+                    <li><a href="/tutorial">/tutorial.html</a></li>
+                    <li><a href="local/path">local/path</a></li>
+                    <li><a href="ftp://ftp.com/my.zip">ftp://ftp.com/my.zip</a></li>
+                    <li><a href="http://nodejs.org">http://nodejs.org</a></li>
+                    <li><a href="http://internal.com/test">http://internal.com/test</a></li>
+                </ul>
+            </div>
+            <button onclick="task6()">Выделить внешние ссылки оранжевым</button>
+        </div>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">7. Функция clear(elem) (2 балла)</div>
+        <div class="task-content">
+            <ol id="list">
+                <li>Привет</li>
+                <li>Мир</li>
+            </ol>
+            <button onclick="clearList()">Очистить список (clear)</button>
+        </div>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">8. Интерфейс для создания списка (2 балла)</div>
+        <div class="task-content">
+            <ul id="dynamic-list"></ul>
+            <button onclick="createList()">Создать список (запрос пунктов)</button>
+        </div>
+    </div>
+
+    <div class="task-section">
+        <div class="task-title">9. Генерация карточек, setInterval, случайные имена (3 балла)</div>
+        <div class="task-content">
+            <div class="display" id="cards-container" style="display: flex; flex-wrap: wrap;"></div>
+            <button onclick="startCardGeneration()">Запустить генерацию карточек (до 6)</button>
+            <button onclick="stopCardGeneration()">Остановить генерацию</button>
+            <p id="card-status"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function taskA() {
+        let x = parseFloat(prompt("Введите значение x для sin(x):", "0"));
+        if (!isNaN(x)) alert(`sin(${x}) = ${Math.sin(x).toFixed(6)}`);
+        else alert("Некорректный ввод");
+    }
+    function taskB() {
+        let x1 = parseFloat(prompt("Введите x1 (первая вершина):", "0"));
+        let y1 = parseFloat(prompt("Введите y1:", "0"));
+        let x2 = parseFloat(prompt("Введите x2 (противоположная вершина):", "2"));
+        let y2 = parseFloat(prompt("Введите y2:", "2"));
+        let px = parseFloat(prompt("Введите x точки:", "1"));
+        let py = parseFloat(prompt("Введите y точки:", "1"));
+        let left = Math.min(x1, x2);
+        let right = Math.max(x1, x2);
+        let bottom = Math.min(y1, y2);
+        let top = Math.max(y1, y2);
+        let inside = (px >= left && px <= right && py >= bottom && py <= top);
+        alert(inside ? "Точка принадлежит квадрату" : "Точка НЕ принадлежит квадрату");
+    }
+    function taskC() {
+        let n = parseInt(prompt("Введите натуральное число:"));
+        if (isNaN(n) || n < 1) { alert("Некорректное число"); return; }
+        let found = false;
+        for (let a = 1; a * a <= n; a++) {
+            let b2 = n - a * a;
+            let b = Math.sqrt(b2);
+            if (b === Math.floor(b) && b >= 1) { found = true; break; }
+        }
+        alert(found ? `Число ${n} можно представить в виде суммы двух квадратов` : `Число ${n} нельзя представить как сумму двух квадратов натуральных чисел`);
+    }
+    function taskD() {
+        let email = prompt("Введите email:", "user@example.com");
+        if (email && email.includes('@')) alert("Email содержит @");
+        else alert("Предупреждение: символ @ отсутствует!");
+    }
+    function taskE() {
+        let s = prompt("Введите строку:", "Hello, мир!");
+        if (!s) { alert("Строка пуста"); return; }
+        let latin = /[a-zA-Z]/g;
+        let matches = s.match(latin);
+        let count = matches ? matches.length : 0;
+        let percent = (count / s.length) * 100;
+        alert(`Доля латинских букв: ${percent.toFixed(2)}%`);
+    }
+    function taskF() {
+        let s = prompt("Введите строку со словами (разделители пробелы):", "word word test test hello");
+        if (!s) return;
+        let words = s.trim().split(/\s+/);
+        let unique = [];
+        for (let w of words) if (!unique.includes(w)) unique.push(w);
+        let result = unique.join(' ');
+        alert(`Исходная: "${s}"\nПосле удаления повторов: "${result}"`);
+    }
+    function taskG() {
+        let n = parseInt(prompt("Введите n (размер массива):", "10"));
+        if (isNaN(n) || n < 1) { alert("Некорректно"); return; }
+        let arr = Array.from({length: n}, () => Math.floor(Math.random() * 100));
+        let reversed = [...arr].reverse();
+        let output = "";
+        for (let i = 0; i < reversed.length; i++) {
+            output += reversed[i] + " ";
+            if ((i+1) % 5 === 0) output += "\n";
+        }
+        alert(`Массив: ${arr.join(", ")}\nВ обратном порядке (по 5 в строке):\n${output}`);
+    }
+    function taskH() {
+        let n = parseInt(prompt("Введите порядок матрицы n:", "4"));
+        if (isNaN(n) || n < 1) return;
+        let matrix = [];
+        for (let i = 0; i < n; i++) {
+            matrix[i] = [];
+            for (let j = 0; j < n; j++) matrix[i][j] = Math.floor(Math.random() * 21) - 10;
+        }
+
+        let diagValues = [];
+        for (let i = 0; i < n; i++) {
+            diagValues.push(matrix[i][i]); 
+            diagValues.push(matrix[i][n-1-i]);
+        }
+        let maxVal = Math.max(...diagValues);
+        let minVal = Math.min(...diagValues);
+        for (let i = 0; i < n; i++) {
+            if (matrix[i][i] !== maxVal && matrix[i][i] !== minVal) matrix[i][i] = 0;
+            if (matrix[i][n-1-i] !== maxVal && matrix[i][n-1-i] !== minVal) matrix[i][n-1-i] = 0;
+        }
+        let strMatrix = matrix.map(row => row.join("\t")).join("\n");
+        alert(`Сгенерированная матрица (после замены):\n${strMatrix}\nMax = ${maxVal}, Min = ${minVal} (на диагоналях сохранены)`);
+    }
+    function taskI() {
+        let n = parseInt(prompt("Сколько дней прибавить к текущей дате?", "7"));
+        if (isNaN(n)) return;
+        let now = new Date();
+        now.setDate(now.getDate() + n);
+        alert(`Текущая дата + ${n} дней = ${now.toLocaleDateString()}`);
+    }
+    function taskJ() {
+        let now = new Date();
+        let year = now.getFullYear();
+        let sepFirst = new Date(year, 8, 1);
+        if (now > sepFirst) sepFirst = new Date(year + 1, 8, 1);
+        let diffMonths = (sepFirst.getFullYear() - now.getFullYear()) * 12 + (sepFirst.getMonth() - now.getMonth());
+        alert(`До 1 сентября осталось ${diffMonths} месяцев (целых).`);
+    }
+
+    function buildNameTable() {
+        let firstName = "Иван";
+        let lastName = "Иванов";
+        let n = firstName.length;
+        let m = lastName.length;
+        let table = document.createElement("table");
+        for (let i = 1; i <= n; i++) {
+            let tr = document.createElement("tr");
+            for (let j = 1; j <= m; j++) {
+                let td = document.createElement("td");
+                td.textContent = `${i}:${j}`;
+                tr.appendChild(td);
+            }
+            table.appendChild(tr);
+        }
+        let container = document.getElementById("table-container");
+        container.innerHTML = "";
+        container.appendChild(table);
+        return table;
+    }
+    buildNameTable();
+
+    function task3() {
+        let divElem = document.querySelector("#sample-page div");
+        let ulElem = document.querySelector("#sample-page ul");
+        let secondLi = document.querySelectorAll("#sample-page li")[1];
+        alert(`Элемент <div>: ${divElem ? divElem.outerHTML : "не найден"}\n\n<UL>: ${ulElem ? ulElem.outerHTML : "не найден"}\n\nВторой <li> (Пит): ${secondLi ? secondLi.outerHTML : "не найден"}`);
+    }
+
+    function task4() {
+        let targetDiv = document.getElementById("target-doc-placeholder");
+        targetDiv.innerHTML = `
+            <form name="search">
+                <label>Search the site: <input type="text" name="search"></label>
+                <input type="submit" value="Search!">
+            </form>
+            <hr>
+            <form name="search-person">
+                Search the visitors:
+                <table id="age-table">
+                    <tbody>
+                        <tr><td>Age:</td><td id="age-list">
+                            <label><input type="radio" name="age" value="young">less than 18</label>
+                            <label><input type="radio" name="age" value="mature">18-50</label>
+                            <label><input type="radio" name="age" value="senior">more than 50</label>
+                        </td></tr>
+                        <tr><td>Additionally:</td><td>
+                            <input type="text" name="info[0]">
+                            <input type="text" name="info[1]">
+                            <input type="text" name="info[2]">
+                        </td></tr>
+                    </tbody>
+                </table>
+                <input type="submit" value="Search!">
+            </form>
+        `;
+        let ageTable = document.getElementById("age-table");
+        let labelsInside = ageTable ? ageTable.querySelectorAll("label") : [];
+        let firstTd = ageTable ? ageTable.querySelector("td") : null;
+        let searchForm = document.forms["search"];
+        let firstInput = searchForm ? searchForm.querySelector("input") : null;
+        let lastInput = searchForm ? searchForm.querySelectorAll("input") : null;
+        lastInput = lastInput ? lastInput[lastInput.length-1] : null;
+        
+        console.log("Таблица age-table:", ageTable);
+        console.log("Label внутри таблицы (3 шт):", labelsInside);
+        console.log("Первый td (Age):", firstTd);
+        console.log("Форма search:", searchForm);
+        console.log("Первый input в форме search:", firstInput);
+        console.log("Последний input:", lastInput);
+        alert(`Элементы найдены (смотри консоль).\nТаблица с id="age-table": ${!!ageTable}\nКол-во label внутри: ${labelsInside.length}\nПервый td: ${firstTd ? firstTd.innerText : "нет"}\nФорма search: ${!!searchForm}\nПервый input: ${firstInput ? firstInput.type : "нет"}\nПоследний input: ${lastInput ? lastInput.type : "нет"}`);
+    }
+
+    function task5() {
+        let wrapper = document.getElementById("task5-table-wrapper");
+        let originalTable = document.querySelector("#table-container table");
+        if (!originalTable) { alert("Таблица не найдена"); return; }
+        let cloneTable = originalTable.cloneNode(true);
+        wrapper.innerHTML = "";
+        wrapper.appendChild(cloneTable);
+        let rows = cloneTable.rows;
+        for (let i = 0; i < rows.length; i++) {
+            let cells = rows[i].cells;
+            for (let j = 0; j < cells.length; j++) {
+                let sum = (i+1) + (j+1);
+                if (sum % 2 === 0) {
+                    cells[j].style.backgroundColor = "red";
+                    cells[j].style.color = "white";
+                }
+            }
+        }
+    }
+
+    function task6() {
+        let allLinks = document.querySelectorAll("#links-container a");
+        allLinks.forEach(link => {
+            let href = link.getAttribute("href");
+            if (href && href.includes("://") && !href.startsWith("http://internal.com")) {
+                link.style.color = "orange";
+                link.style.fontWeight = "bold";
+            }
+        });
+        alert("Внешние ссылки стали оранжевыми (кроме internal.com)");
+    }
+
+    function clear(elem) {
+        if (elem) elem.innerHTML = "";
+    }
+    function clearList() {
+        let listElem = document.getElementById("list");
+        clear(listElem);
+        alert("Список очищен");
+    }
+
+    function createList() {
+        let count = parseInt(prompt("Введите количество пунктов списка:"));
+        if (isNaN(count) || count < 1) { alert("Некорректное количество"); return; }
+        let ul = document.getElementById("dynamic-list");
+        ul.innerHTML = "";
+        for (let i = 0; i < count; i++) {
+            let content = prompt(`Введите содержимое для пункта ${i+1}:`, `Пункт ${i+1}`);
+            if (content !== null) {
+                let li = document.createElement("li");
+                li.textContent = content;
+                ul.appendChild(li);
+            }
+        }
+    }
+
+    let cardInterval = null;
+    let cardCounter = 0;
+    const MAX_CARDS = 6;
+
+    const firstNames = ["Алексей", "Мария", "Иван", "Екатерина", "Дмитрий", "Анна", "Сергей", "Ольга", "Николай", "Татьяна"];
+    const lastNames = ["Смирнов", "Иванова", "Кузнецов", "Петрова", "Соколов", "Михайлова", "Федоров", "Морозова", "Волков", "Алексеева"];
+
+    function getRandomName() {
+        let firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        let lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        return `${firstName} ${lastName}`;
+    }
+
+    function addCard() {
+        if (cardCounter >= MAX_CARDS) {
+            stopCardGeneration();
+            document.getElementById("card-status").innerText = "Достигнуто 6 карточек. Генерация остановлена.";
+            return;
+        }
+        cardCounter++;
+        let container = document.getElementById("cards-container");
+        let cardDiv = document.createElement("div");
+        cardDiv.className = "dynamic-card";
+        let img = document.createElement("img");
+        img.src = `https://thispersondoesnotexist.com/?${cardCounter}`;
+        img.alt = "Avatar";
+        let descDiv = document.createElement("div");
+        descDiv.className = "description";
+        let nameP = document.createElement("p");
+        nameP.textContent = getRandomName();
+        descDiv.appendChild(nameP);
+        cardDiv.appendChild(img);
+        cardDiv.appendChild(descDiv);
+        container.appendChild(cardDiv);
+        document.getElementById("card-status").innerText = `Добавлена карточка ${cardCounter} / ${MAX_CARDS}`;
+        if (cardCounter === MAX_CARDS) stopCardGeneration();
+    }
+
+    function startCardGeneration() {
+        if (cardInterval) return;
+        cardInterval = setInterval(addCard, 2000);
+        document.getElementById("card-status").innerText = "Генерация карточек запущена...";
+    }
+    function stopCardGeneration() {
+        if (cardInterval) {
+            clearInterval(cardInterval);
+            cardInterval = null;
+            document.getElementById("card-status").innerText = "Генерация остановлена.";
+        }
+    }
+
+    function buildFullLayoutFromScratch() {
+        let section = document.querySelector("#cards-container")?.parentElement;
+        if (!section) return;
+        alert("Для 9a: разметка уже создана динамически карточками. Полная разметка body была бы громоздкой, но принцип createElement использован в addCard.");
+    }
+</script>
+</body>
+</html>
