@@ -23,7 +23,6 @@
             margin: 0 auto;
         }
 
-        /* Карточка регистрации */
         .registration-card {
             background: white;
             border-radius: 16px;
@@ -48,7 +47,6 @@
             font-size: 14px;
         }
 
-        /* Лоадер */
         #loader {
             padding: 60px 40px;
             text-align: center;
@@ -83,7 +81,6 @@
             color: #667eea;
         }
 
-        /* Основной контент */
         #mainContent {
             padding: 0;
         }
@@ -187,7 +184,6 @@
             background: #5a6268;
         }
 
-        /* Исправленные стили для полей карты */
         .card-number-group {
             display: flex;
             gap: 8px;
@@ -213,7 +209,6 @@
             box-shadow: 0 0 0 2px rgba(102,126,234,0.2);
         }
 
-        /* Стили для строки с датой и CVV */
         .payment-row {
             display: flex;
             gap: 15px;
@@ -251,7 +246,6 @@
             color: #555;
         }
 
-        /* Индикатор шагов */
         .step-indicator {
             padding: 20px 25px;
             background: #f8f9fa;
@@ -292,7 +286,6 @@
             font-weight: bold;
         }
 
-        /* Кнопка назад на главную */
         .back-home {
             text-align: center;
             margin-top: 20px;
@@ -314,7 +307,6 @@
             transform: translateY(-2px);
         }
 
-        /* Стили для сообщений */
         .info-text {
             margin-bottom: 20px;
             color: #666;
@@ -322,7 +314,6 @@
             line-height: 1.5;
         }
 
-        /* Адаптивность для мобильных устройств */
         @media (max-width: 480px) {
             .frame-content {
                 padding: 20px;
@@ -451,7 +442,7 @@
                     </div>
                 </div>
 
-                <!-- Фрейм 3: Оплата (ИСПРАВЛЕН) -->
+                <!-- Фрейм 3: Оплата -->
                 <div id="frame_3" class="frame-content hidden">
                     <h3>Шаг 3. Метод оплаты</h3>
                     <p class="info-text">Для совершения покупок в Сервисе необходимо подключить банковскую карту.</p>
@@ -507,7 +498,6 @@
     </div>
 
     <script>
-        // ========== ЛОАДЕР ==========
         let width = 0;
         const fill = document.getElementById('progressFill');
         const percentSpan = document.getElementById('progressPercent');
@@ -526,7 +516,6 @@
             }
         }, 40);
 
-        // ========== ДАННЫЕ ДЛЯ ВЫПАДАЮЩЕГО СПИСКА ==========
         const countries = [
             'Россия', 'США', 'Великобритания', 'Германия', 'Франция', 
             'Италия', 'Испания', 'Китай', 'Япония', 'Канада',
@@ -545,7 +534,6 @@
             }
         }
 
-        // ========== УПРАВЛЕНИЕ СЕКЦИЯМИ ==========
         function showFrame(frameId) {
             const frames = ['frame_start', 'frame_1', 'frame_2', 'frame_3', 'frame_4'];
             frames.forEach(id => {
@@ -557,7 +545,6 @@
             updateStepIndicator(frameId);
         }
 
-        // ========== ИНДИКАТОР ШАГОВ ==========
         function updateStepIndicator(currentFrame) {
             const stepMap = {
                 'frame_start': 0,
@@ -582,7 +569,6 @@
             });
         }
 
-        // ========== ПРОВЕРКА ФОРМЫ 1 ==========
         function checkForm1() {
             const firstName = document.getElementById('firstName').value;
             const lastName = document.getElementById('lastName').value;
@@ -600,7 +586,6 @@
             }
         }
 
-        // ========== ПРОВЕРКА ТЕЛЕФОНА (С ГЕНЕРАЦИЕЙ КОДА) ==========
         let codeVerified = false;
         let generatedCode = null;
 
@@ -614,26 +599,20 @@
             }
         }
 
-        // Отправка кода - генерируем и показываем в alert
         document.getElementById('sendCodeBtn').onclick = function() {
-            // Генерируем случайный 4-значный код
             generatedCode = Math.floor(1000 + Math.random() * 9000).toString();
             
-            // Показываем код в alert (имитация отправки SMS)
             alert(`📱 На номер ${document.getElementById('phoneNumber').value} отправлен код: ${generatedCode}`);
-            
-            // Показываем поле для ввода кода
+
             const codeSection = document.getElementById('codeSection');
             codeSection.classList.remove('hidden');
             this.disabled = true;
             
-            // Очищаем предыдущее значение
             document.getElementById('verificationCode').value = '';
             codeVerified = false;
             document.getElementById('next2Btn').disabled = true;
         };
 
-        // Проверка кода
         document.getElementById('checkCodeBtn').onclick = function() {
             const enteredCode = document.getElementById('verificationCode').value;
             
@@ -644,7 +623,6 @@
                     alert('✅ Код подтвержден! Теперь можно перейти к следующему шагу.');
                 } else {
                     alert('❌ Неверный код! Нажмите "Отправить код" еще раз.');
-                    // Разрешаем отправить код заново
                     document.getElementById('sendCodeBtn').disabled = false;
                     document.getElementById('codeSection').classList.add('hidden');
                 }
@@ -653,7 +631,6 @@
             }
         };
 
-        // ========== ПРОВЕРКА ОПЛАТЫ ==========
         function checkPaymentForm() {
             const parts = document.querySelectorAll('.card-part');
             let cardComplete = true;
@@ -672,12 +649,10 @@
             }
         }
 
-        // ========== АВТОПЕРЕХОД МЕЖДУ ПОЛЯМИ КАРТЫ ==========
         function setupCardFields() {
             const cardParts = document.querySelectorAll('.card-part');
             cardParts.forEach((part, index) => {
                 part.addEventListener('input', function(e) {
-                    // Ограничиваем только цифрами
                     this.value = this.value.replace(/[^0-9]/g, '');
                     
                     if (this.value.length === 4 && index < cardParts.length - 1) {
@@ -686,7 +661,6 @@
                     checkPaymentForm();
                 });
                 
-                // Обработка клавиши Backspace для перехода на предыдущее поле
                 part.addEventListener('keydown', function(e) {
                     if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
                         cardParts[index - 1].focus();
@@ -695,7 +669,6 @@
             });
         }
 
-        // ========== ФОРМАТИРОВАНИЕ ДАТЫ ==========
         function setupExpiryDate() {
             const expiryInput = document.getElementById('expiryDate');
             expiryInput.addEventListener('input', function(e) {
@@ -709,12 +682,10 @@
             });
         }
 
-        // ========== ИНИЦИАЛИЗАЦИЯ ==========
         populateCountries();
         setupCardFields();
         setupExpiryDate();
         
-        // Обработчики событий
         document.getElementById('startRegBtn').onclick = () => showFrame('frame_1');
         
         const inputs1 = ['firstName', 'lastName', 'email', 'country', 'address', 'password', 'confirmPassword'];
@@ -746,7 +717,6 @@
         };
         
         document.getElementById('restartBtn').onclick = function() {
-            // Сброс всех значений
             codeVerified = false;
             generatedCode = null;
             document.getElementById('next2Btn').disabled = true;
@@ -770,13 +740,11 @@
             showFrame('frame_start');
         };
         
-        // Инициализация отключенных кнопок
         document.getElementById('next1Btn').disabled = true;
         document.getElementById('sendCodeBtn').disabled = true;
         document.getElementById('next2Btn').disabled = true;
         document.getElementById('finishBtn').disabled = true;
         
-        // Ограничение для CVV только цифрами
         document.getElementById('cvv').addEventListener('input', function() {
             this.value = this.value.replace(/[^0-9]/g, '');
             checkPaymentForm();
