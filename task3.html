@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>📋 Управление данными</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .toolbar {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349, #f45c43);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        select {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .table-wrapper {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .age-0-17 { background-color: #d4edda; }
+        .age-18-59 { background-color: #fff3cd; }
+        .age-60-plus { background-color: #f8d7da; }
+
+        .edit-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-btn:hover {
+            background: #2980b9;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .modal-content input, .modal-content select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+
+        .checkbox-col {
+            width: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 Управление данными о людях</h1>
+            <p>Загружайте, добавляйте, редактируйте и удаляйте записи</p>
+        </div>
+
+        <div class="toolbar">
+            <div class="btn-group">
+                <button class="btn btn-primary" id="loadBtn">🔄 Загрузить данные</button>
+                <button class="btn btn-success" id="addBtn">➕ Добавить запись</button>
+                <button class="btn btn-danger" id="deleteSelectedBtn">🗑 Удалить выбранные</button>
+            </div>
+            <select id="genderFilter">
+                <option value="all">👥 Все люди</option>
+                <option value="male">👨 Мужчины</option>
+                <option value="female">👩 Женщины</option>
+            </select>
+        </div>
+
+        <div class="table-wrapper" id="tableContainer">
+            <div class="empty-state">
+                📭 Нажмите "Загрузить данные" для начала работы
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>✏️ Редактирование записи</h3>
+            <input type="text" id="editFirstName" placeholder="Имя">
+            <input type="text" id="editLastName" placeholder="Фамилия">
+            <input type="number" id="editAge" placeholder="Возраст">
+            <select id="editGender">
+                <option value="male">Мужчина</option>
+                <option value="female">Женщина</option>
+            </select>
+            <input type="text" id="editAddress" placeholder="Адрес">
+            <input type="text" id="editPhone" placeholder="Телефон">
+            <div class="btn-group" style="margin-top: 15px;">
+                <button class="btn btn-primary" id="saveEditBtn">💾 Сохранить</button>
+                <button class="btn" id="cancelEditBtn" style="background:#ddd;">❌ Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getData } from './humansData.js';
+        
+        let allHumans = [];
+        let editingId = null;
+
+        function getAgeClass(age) {
+            if (age < 18) return 'age-0-17';
+            if (age <= 60) return 'age-18-59';
+            return 'age-60-plus';
+        }
+
+        function renderTable() {
+            const container = document.getElementById('tableContainer');
+            const genderFilter = document.getElementById('genderFilter').value;
+            
+            let filtered = genderFilter === 'all' ? allHumans : allHumans.filter(h => h.gender === genderFilter);
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state">📭 Нет данных для отображения</div>';
+                return;
+            }
+            
+            let html = `<table>
+                <thead>
+                    <tr>
+                        <th class="checkbox-col"><input type="checkbox" id="selectAll"></th>
+                        <th>ID</th><th>Имя</th><th>Фамилия</th><th>Возраст</th>
+                        <th>Пол</th><th>Адрес</th><th>Телефон</th><th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+            
+            filtered.forEach(h => {
+                const genderText = h.gender === 'male' ? 'Мужской' : 'Женский';
+                html += `<tr class="${getAgeClass(h.age)}" data-id="${h.id}">
+                            <td><input type="checkbox" class="rowCheckbox" value="${h.id}"></td>
+                            <td>${h.id}</td>
+                            <td>${h.firstName}</td>
+                            <td>${h.lastName}</td>
+                            <td>${h.age}</td>
+                            <td>${genderText}</td>
+                            <td>${h.address}</td>
+                            <td>${h.phone}</td>
+                            <td><button class="edit-btn" onclick="window.editHuman(${h.id})">✏️</button></td>
+                         </tr>`;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) {
+                selectAll.onclick = (e) => {
+                    document.querySelectorAll('.rowCheckbox').forEach(cb => cb.checked = e.target.checked);
+                };
+            }
+        }
+        
+        window.editHuman = (id) => {
+            const human = allHumans.find(h => h.id === id);
+            if (!human) return;
+            editingId = id;
+            document.getElementById('editFirstName').value = human.firstName;
+            document.getElementById('editLastName').value = human.lastName;
+            document.getElementById('editAge').value = human.age;
+            document.getElementById('editGender').value = human.gender;
+            document.getElementById('editAddress').value = human.address;
+            document.getElementById('editPhone').value = human.phone;
+            document.getElementById('editModal').style.display = 'flex';
+        };
+        
+        document.getElementById('saveEditBtn').onclick = () => {
+            const index = allHumans.findIndex(h => h.id === editingId);
+            if (index !== -1) {
+                allHumans[index] = {
+                    ...allHumans[index],
+                    firstName: document.getElementById('editFirstName').value,
+                    lastName: document.getElementById('editLastName').value,
+                    age: parseInt(document.getElementById('editAge').value),
+                    gender: document.getElementById('editGender').value,
+                    address: document.getElementById('editAddress').value,
+                    phone: document.getElementById('editPhone').value
+                };
+            }
+            document.getElementById('editModal').style.display = 'none';
+            renderTable();
+        };
+        
+        document.getElementById('cancelEditBtn').onclick = () => {
+            document.getElementById('editModal').style.display = 'none';
+        };
+        
+        document.getElementById('addBtn').onclick = () => {
+            const newId = allHumans.length > 0 ? Math.max(...allHumans.map(h => h.id)) + 1 : 0;
+            allHumans.push({
+                id: newId,
+                firstName: 'Новый',
+                lastName: 'Пользователь',
+                age: 25,
+                gender: 'male',
+                address: 'г. Москва, ул. Центральная, д. 1',
+                phone: '+7(999)999-99-99'
+            });
+            renderTable();
+        };
+        
+        document.getElementById('deleteSelectedBtn').onclick = () => {
+            const checkboxes = document.querySelectorAll('.rowCheckbox:checked');
+            const idsToDelete = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            allHumans = allHumans.filter(h => !idsToDelete.includes(h.id));
+            renderTable();
+        };
+        
+        document.getElementById('genderFilter').onchange = () => renderTable();
+        
+        document.getElementById('loadBtn').onclick = async () => {
+            const btn = document.getElementById('loadBtn');
+            btn.textContent = '⏳ Загрузка...';
+            btn.disabled = true;
+            allHumans = await getData();
+            btn.textContent = '🔄 Загрузить данные';
+            btn.disabled = false;
+            renderTable();
+        };
+        
+        document.getElementById('editModal').onclick = (e) => {
+            if (e.target === document.getElementById('editModal')) {
+                document.getElementById('editModal').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>

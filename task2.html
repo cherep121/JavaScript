@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>📡 API Запросы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            padding: 14px 35px;
+            font-size: 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            font-size: 1.2em;
+        }
+
+        .api-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .api-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 18px;
+            border-left: 5px solid #667eea;
+        }
+
+        .api-name {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .api-data {
+            color: #2c3e50;
+            font-size: 0.95em;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 45px;
+            height: 45px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📡 Запросы к публичным API</h1>
+        
+        <div class="button-group">
+            <button class="btn btn-primary" id="runCallback">🔄 Последовательно (Callback)</button>
+            <button class="btn btn-success" id="runPromise">✨ Параллельно (Promise.all)</button>
+            <button class="btn btn-warning" id="runAsync">⚡ Параллельно (async/await)</button>
+        </div>
+
+        <div class="result-card">
+            <div class="result-header">📊 Результаты запросов</div>
+            <div id="result">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 20px;">Нажмите на кнопку выше ⬆️</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fallbackData = {
+            cat: "🐱 Кошки спят до 16 часов в день!",
+            dog: "🐶 Собаки понимают до 250 слов!",
+            user: "👤 Иван Петров, Россия",
+            activity: "💡 Почитай интересную книгу!",
+            quote: "📖 'Простота — высшая степень изысканности'"
+        };
+
+        const apis = [
+            { name: '🐱 Факт о кошках', url: 'https://meowfacts.herokuapp.com/', fallback: fallbackData.cat, parser: (d) => d.data[0] },
+            { name: '🐕 Факт о собаках', url: 'https://dog-api.kinduff.com/api/facts', fallback: fallbackData.dog, parser: (d) => d.facts[0] },
+            { name: '👤 Случайный пользователь', url: 'https://randomuser.me/api/', fallback: fallbackData.user, parser: (d) => `${d.results[0].name.first} ${d.results[0].name.last}, ${d.results[0].location.country}` },
+            { name: '💡 Идея для досуга', url: 'https://www.boredapi.com/api/activity/', fallback: fallbackData.activity, parser: (d) => d.activity || fallbackData.activity },
+            { name: '📖 Случайная цитата', url: 'https://api.quotable.io/random', fallback: fallbackData.quote, parser: (d) => `"${d.content.substring(0, 80)}..." — ${d.author}` }
+        ];
+
+        function fetchData(api, callback) {
+            const xhr = new XMLHttpRequest();
+            let finished = false;
+            
+            xhr.open('GET', api.url);
+            xhr.timeout = 2000;
+            
+            xhr.onload = function() {
+                if (finished) return;
+                finished = true;
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        callback(null, api.parser(data));
+                    } catch(e) {
+                        callback(null, api.fallback);
+                    }
+                } else {
+                    callback(null, api.fallback);
+                }
+            };
+            
+            xhr.onerror = function() {
+                if (finished) return;
+                finished = true;
+                callback(null, api.fallback);
+            };
+            
+            xhr.ontimeout = function() {
+                if (finished) return;
+                finished = true;
+                callback(null, api.fallback);
+            };
+            
+            xhr.send();
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('result');
+            
+            if (!results || results.length === 0) {
+                container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Загрузка...</p></div>';
+                return;
+            }
+            
+            let html = '<div class="api-grid">';
+            results.forEach(item => {
+                html += `
+                    <div class="api-item">
+                        <div class="api-name">
+                            ${item.name}
+                            <span class="status-badge status-success">✅ ${item.method}</span>
+                        </div>
+                        <div class="api-data">📌 ${item.data}</div>
+                    </div>
+                `;
+            });
+            html += `<div class="summary">✅ Успешно: ${results.length}/5</div></div>`;
+            container.innerHTML = html;
+        }
+
+        function runCallback() {
+            const results = [];
+            let index = 0;
+            
+            function next() {
+                if (index >= apis.length) {
+                    displayResults(results);
+                    return;
+                }
+                const api = apis[index];
+                fetchData(api, (err, data) => {
+                    results.push({ name: api.name, data: data, method: 'callback' });
+                    index++;
+                    next();
+                });
+            }
+            next();
+        }
+
+        function runPromise() {
+            const promises = apis.map(api => {
+                return new Promise((resolve) => {
+                    fetchData(api, (err, data) => {
+                        resolve({ name: api.name, data: data, method: 'Promise.all' });
+                    });
+                });
+            });
+            Promise.all(promises).then(displayResults);
+        }
+
+        async function runAsync() {
+            const results = [];
+            for (const api of apis) {
+                const data = await new Promise((resolve) => {
+                    fetchData(api, (err, result) => resolve(result));
+                });
+                results.push({ name: api.name, data: data, method: 'async/await' });
+            }
+            displayResults(results);
+        }
+
+        function disableButton(btn, disable) {
+            btn.disabled = disable;
+            btn.textContent = disable ? '⏳ Загрузка...' : btn.originalText;
+        }
+
+        document.getElementById('runCallback').originalText = '🔄 Последовательно (Callback)';
+        document.getElementById('runPromise').originalText = '✨ Параллельно (Promise.all)';
+        document.getElementById('runAsync').originalText = '⚡ Параллельно (async/await)';
+
+        document.getElementById('runCallback').onclick = function() {
+            disableButton(this, true);
+            runCallback();
+            setTimeout(() => disableButton(this, false), 1500);
+        };
+        
+        document.getElementById('runPromise').onclick = function() {
+            disableButton(this, true);
+            runPromise();
+            setTimeout(() => disableButton(this, false), 1500);
+        };
+        
+        document.getElementById('runAsync').onclick = function() {
+            disableButton(this, true);
+            runAsync();
+            setTimeout(() => disableButton(this, false), 1500);
+        };
+    </script>
+</body>
+</html>
